@@ -1,21 +1,24 @@
 
-const baseUrl = 'https://services.odata.org/V2/Northwind/Northwind.svc';
+const baseUrl = 'https://services.odata.org/V4/Northwind/Northwind.svc';
 
 const ODataNorthwindApi = {
-    searchOrders: (page, pageSize, customerID, orderID) => {
+    searchOrders: (page, pageSize, customerID, orderID, productID) => {
         var skip = (page-1) * pageSize;
-        var uri = `https://cors-anywhere.herokuapp.com/${baseUrl}/Orders?`;
-        uri += `$format=json&$expand=Order_Details,Customer,Shipper&$skip=${skip}&$top=${pageSize}&$inlinecount=allpages`;
-        uri += `&$filter=substringof('${customerID}',CustomerID) eq true`;
+        var uri = `${baseUrl}/Orders?`;
+        uri += `$expand=Order_Details,Customer,Shipper&$skip=${skip}&$top=${pageSize}&$count=true`;
+        uri += `&$filter=contains(CustomerID, '${customerID}')`;
         if(!(orderID == null || orderID === '')) {
             uri += ` and ${orderID} eq OrderID`;
+        }
+        if(!(productID == null || productID ==='')){
+            uri += ` and Order_Details/any(o:o/ProductID eq ${productID})`
         }
 
         return fetch(uri, {
             method: 'GET',
-            mode: 'cors',
+            //mode: 'no-cors',
             headers: {
-                'Access-Control-Allow-Origin': '*' 
+                "Accept": "application/json"
             }
         });
     }

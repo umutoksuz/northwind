@@ -1,10 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import { Row, Col, Table } from 'react-bootstrap'
+import { Redirect } from 'react-router-dom'
 
 
-function SearchGrid({tableData}) {
+function SearchGrid(props) {
 
+    const tableData = props.tableData;
     
+    const openDetails = (order) => {
+        props.history.push({
+            pathname: 'orders/details',
+            state: order
+        });
+    }
 
     return (
         <>
@@ -23,7 +31,7 @@ function SearchGrid({tableData}) {
                     {
                         tableData.map((order, index) => {
                             return (
-                                <tr key={index} onClick={() => console.log(order)}>
+                                <tr key={index} onClick={() => openDetails(order)}>
                                     <td>{order.OrderID}</td>
                                     <td>{order.CustomerID}</td>
                                     <td>{order.Customer.CompanyName}</td>
